@@ -21,5 +21,5 @@ async def on_raw_reaction_add(payload):
         if payload.emoji.name in EXCLUDE_LIST:
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
-            user = client.get_user(payload.user_id)
+            user = await client.fetch_user(payload.user_id)
             await message.remove_reaction(payload.emoji.name, user)
