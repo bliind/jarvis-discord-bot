@@ -3,7 +3,6 @@ import os
 
 TOKEN = os.getenv('MARVIN_TOKEN')
 SERVER_ID = int(os.getenv('MARVIN_SERVER_ID'))
-CHANNEL_ID = int(os.getenv('MARVIN_CHANNEL_ID'))
 
 EXCLUDE_LIST = ['🖕', '💩', '🤡']
 
