@@ -75,25 +75,32 @@ async def on_message(message):
             async for m in thread.history(limit=1, oldest_first=True):
                 original_question = m.content
 
-            dev = await bot.fetch_user(message.author.id)
             output_channel = await bot.fetch_channel(DEVREPLY_CHANNEL)
             link = f'https://discord.com/channels/{SERVER_ID}/{message.channel.id}/{message.id}'
             embed = discord.Embed(
                 colour=BLUE,
-                title='Snap Team Reply',
+                title=message.channel.name,
                 description = f'''
-                    _Question titled: {message.channel.name}_
                     {original_question}
 
                     ------
 
-                    _Replied to by <@{dev.id}>:_
+                    ***Replied to by <@{message.author.id}>:***
                     {dev_answer}
 
-                    [See reply here]({link})
-                '''.replace(' '*20, '')
+                    [See reply here]({link})'''.replace(' '*20, '')
             )
 
+            embed.set_thumbnail(url=message.author.display_avatar.url)
             await output_channel.send(embed=embed)
+
+            for tag in chan.available_tags:
+                if 'answered' in tag.name.lower():
+                    answered = tag
+                if 'question' in tag.name.lower():
+                    question = tag
+
+            await thread.add_tags(answered)
+            await thread.remove_tags(question)
 
 bot.run(TOKEN)
