@@ -3,6 +3,14 @@ import json
 import os
 from discord import app_commands
 
+"""
+    This is the 'all-in-one' version of the bot which performs
+    not just the reaction logging but also posting replies of
+    a monitored Forum channel from members of a particular
+    role. There is also a command to add a reply manually, in
+    case it is an older message or the bot was offline.
+"""
+
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
