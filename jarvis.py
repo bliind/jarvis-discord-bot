@@ -4,11 +4,14 @@ import os
 from discord import app_commands
 
 """
-    This is the 'all-in-one' version of the bot which performs
-    not just the reaction logging but also posting replies of
-    a monitored Forum channel from members of a particular
-    role. There is also a command to add a reply manually, in
-    case it is an older message or the bot was offline.
+    J.A.R.V.I.S.
+    Just A Rather Very Intelligent System
+
+    A Discord bot for:
+        - Auto-pinning forum OPs
+        - Logging reaction usage of specified emotes
+        - Publicly posting replies to forum threads
+            from a specified role
 """
 
 class dotdict(dict):
@@ -17,7 +20,7 @@ class dotdict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
-env = os.getenv('MARVIN_ENV')
+env = os.getenv('JARVIS_ENV')
 config_file = 'config.json' if env == 'prod' else 'config.test.json'
 with open(config_file, encoding='utf8') as stream:
     config = json.load(stream)
@@ -108,7 +111,7 @@ async def first_command(interaction, message_link: str):
 @bot.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=config.server))
-    print(f"{config.env.upper()} Marvin is ready for duty")
+    print(f"{config.env.upper()} JARVIS is ready for duty")
 
 @bot.event
 async def on_raw_reaction_add(payload):
