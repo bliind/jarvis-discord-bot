@@ -108,7 +108,7 @@ async def first_command(interaction, message_link: str):
 @bot.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=config.server))
-    print(f"{config.env} Marvin is ready for duty")
+    print(f"{config.env.upper()} Marvin is ready for duty")
 
 @bot.event
 async def on_raw_reaction_add(payload):
@@ -188,5 +188,15 @@ async def on_message(message):
     except: print('Could not add answered tag')
     try: await thread.remove_tags(question)
     except: print('Could not remove question tag')
+
+@bot.event
+async def on_thread_create(thread):
+    if thread.parent.type != discord.ChannelType.forum:
+        return
+    if thread.parent.id not in config.auto_pin_channels:
+        return
+
+    async for message in thread.history(limit=1, oldest_first=True):
+        await message.pin()
 
 bot.run(config.token)
