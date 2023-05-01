@@ -1,0 +1,12 @@
+{
+    "env": "test",
+    "token": "token",
+    "server": 0,
+    "emoji_channel": 0,
+    "reply_channel": 0,
+    "monitor_channel": 0,
+    "role_check": "role name",
+    "upvote_emoji": ":thumbsup:",
+    "downvote_emoji": ":thumbsdown:",
+    "monitor_emoji": ["💩", "🤡", "🖕"]
+}
