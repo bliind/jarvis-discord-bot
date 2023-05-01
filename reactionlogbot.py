@@ -5,27 +5,29 @@ TOKEN = os.getenv('MARVIN_TOKEN')
 SERVER_ID = int(os.getenv('MARVIN_SERVER_ID'))
 CHANNEL_ID = int(os.getenv('MARVIN_CHANNEL_ID'))
 
-EXCLUDE_LIST = ['💩', '🤡', '🖕']
+EXCLUDE_LIST = ['💩', '🤡', '🖕', '🏳️‍🌈', '🏳️‍⚧️']
 
 GREEN = 5763719
 RED = 15548997
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+bot = discord.Client(intents=intents)
 
 def get_message_link(p):
     return f'https://discord.com/channels/{p.guild_id}/{p.channel_id}/{p.message_id}'
 
-@client.event
+@bot.event
 async def on_ready():
     print('Reaction Log Bot is ready for duty')
 
-@client.event
+@bot.event
 async def on_raw_reaction_add(payload):
     if payload.guild_id == SERVER_ID:
         if payload.emoji.name in EXCLUDE_LIST:
-            output_channel = client.get_channel(CHANNEL_ID)
+            output_channel = bot.get_channel(CHANNEL_ID)
             message_link = get_message_link(payload)
-            user = await client.fetch_user(payload.user_id)
+            user = await bot.fetch_user(payload.user_id)
 
             embed = discord.Embed(
                 colour=GREEN,
@@ -38,13 +40,13 @@ async def on_raw_reaction_add(payload):
 
             await output_channel.send(embed=embed)
 
-@client.event
+@bot.event
 async def on_raw_reaction_remove(payload):
     if payload.guild_id == SERVER_ID:
         if payload.emoji.name in EXCLUDE_LIST:
-            output_channel = client.get_channel(CHANNEL_ID)
+            output_channel = bot.get_channel(CHANNEL_ID)
             message_link = get_message_link(payload)
-            user = await client.fetch_user(payload.user_id)
+            user = await bot.fetch_user(payload.user_id)
 
             embed = discord.Embed(
                 colour=RED,
@@ -57,4 +59,4 @@ async def on_raw_reaction_remove(payload):
 
             await output_channel.send(embed=embed)
 
-client.run(TOKEN)
+bot.run(TOKEN)
