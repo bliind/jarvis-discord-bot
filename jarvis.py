@@ -54,7 +54,7 @@ async def send_devreply_embed(message, thread_open):
             ***Replied to by <@{message.author.id}>:***
             {message.content}
 
-            [See reply here]({link})'''.replace(' '*20, '')
+            [See reply here]({link})'''.replace(' '*12, '')
     )
 
     embed.set_thumbnail(url=message.author.display_avatar.url)
