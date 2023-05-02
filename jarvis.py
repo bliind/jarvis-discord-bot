@@ -132,7 +132,7 @@ async def on_raw_reaction_add(payload):
             {payload.emoji.name} **added** by <@{payload.user_id}> in <#{payload.channel_id}>\n
             {user.name}#{user.discriminator}\n
             [Jump to Message]({message_link})
-        """.replace(' '*20, '')
+        """.replace(' '*12, '')
     )
 
     await output_channel.send(embed=embed)
@@ -156,7 +156,7 @@ async def on_raw_reaction_remove(payload):
             {payload.emoji.name} by <@{payload.user_id}> in <#{payload.channel_id}> **removed**\n
             {user.name}#{user.discriminator}\n
             [Jump to Message]({message_link})
-        """.replace(' '*20, '')
+        """.replace(' '*12, '')
     )
 
     await output_channel.send(embed=embed)
