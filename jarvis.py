@@ -61,6 +61,7 @@ async def send_devreply_embed(message, thread_open):
     sent = await output_channel.send(embed=embed)
     await sent.add_reaction(config.upvote_emoji)
     await sent.add_reaction(config.downvote_emoji)
+    await sent.publish()
 
 ### Commands
 
