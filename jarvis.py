@@ -59,10 +59,10 @@ async def send_devreply_embed(message, thread_open):
 
     embed.set_thumbnail(url=message.author.display_avatar.url)
     sent = await output_channel.send(embed=embed)
-    try: await sent.add_reaction(config.upvote_emoji)
-    except: print('Could not add upvote emote')
-    try: await sent.add_reaction(config.downvote_emoji)
-    except: print('Could not add downvote emote')
+    # try: await sent.add_reaction(config.upvote_emoji)
+    # except: print('Could not add upvote emote')
+    # try: await sent.add_reaction(config.downvote_emoji)
+    # except: print('Could not add downvote emote')
     try: await sent.publish()
     except: print('Could not Publish message')
 
