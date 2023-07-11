@@ -122,24 +122,29 @@ async def on_raw_reaction_add(payload):
     # checks
     if payload.guild_id != config.server:
         return
-    if payload.emoji.name not in config.monitor_emoji:
-        return
+    if payload.emoji.name in config.monitor_emoji:
+        # monitor logic
+        output_channel = bot.get_channel(config.emoji_channel)
+        message_link = get_message_link(payload)
+        user = await bot.fetch_user(payload.user_id)
 
-    # logic
-    output_channel = bot.get_channel(config.emoji_channel)
-    message_link = get_message_link(payload)
-    user = await bot.fetch_user(payload.user_id)
+        embed = discord.Embed(
+            colour=GREEN,
+            description=f"""
+                {payload.emoji.name} **added** by <@{payload.user_id}> in <#{payload.channel_id}>\n
+                {user.name}#{user.discriminator}\n
+                [Jump to Message]({message_link})
+            """.replace(' '*12, '')
+        )
 
-    embed = discord.Embed(
-        colour=GREEN,
-        description=f"""
-            {payload.emoji.name} **added** by <@{payload.user_id}> in <#{payload.channel_id}>\n
-            {user.name}#{user.discriminator}\n
-            [Jump to Message]({message_link})
-        """.replace(' '*12, '')
-    )
+        await output_channel.send(embed=embed)
 
-    await output_channel.send(embed=embed)
+    if payload.emoji.name in config.remove_emoji:
+        # auto remove logic
+        channel = bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        user = await bot.fetch_user(payload.user_id)
+        await message.remove_reaction(payload.emoji.name, user)
 
 @bot.event
 async def on_raw_reaction_remove(payload):

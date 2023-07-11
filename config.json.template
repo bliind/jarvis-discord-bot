@@ -8,6 +8,7 @@
     "role_check": "role name",
     "upvote_emoji": ":thumbsup:",
     "downvote_emoji": ":thumbsdown:",
-    "monitor_emoji": ["💩", "🤡", "🖕"],
+    "monitor_emoji": [],
+    "remove_emoji": [],
     "auto_pin_channels": []
 }
