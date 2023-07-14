@@ -97,7 +97,7 @@ async def first_command(interaction, message_link: str):
     # check message is from snap team
     guild = bot.get_guild(config.server)
     author = await guild.fetch_member(message.author.id)
-    if config.role_check.lower() not in [y.name.lower() for y in author.roles]:
+    if config.dev_role.lower() not in [y.name.lower() for y in author.roles]:
         return
 
     # get the channel it's actually posted to
@@ -179,27 +179,30 @@ async def on_message(message):
         return
     if message.channel.parent.id != config.monitor_channel:
         return
-    if config.role_check.lower() not in [y.name.lower() for y in message.author.roles]:
-        return
 
-    # logic
-    chan = bot.get_channel(config.monitor_channel)
-    thread = chan.get_thread(message.channel.id)
-    async for m in thread.history(limit=1, oldest_first=True):
-        thread_open = m.content
+    # snap team reply logic
+    if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
+        chan = bot.get_channel(config.monitor_channel)
+        thread = chan.get_thread(message.channel.id)
+        async for m in thread.history(limit=1, oldest_first=True):
+            thread_open = m.content
 
-    await send_devreply_embed(message, thread_open)
+        await send_devreply_embed(message, thread_open)
 
-    for tag in chan.available_tags:
-        if 'answered' in tag.name.lower():
-            answered = tag
-        if 'question' in tag.name.lower():
-            question = tag
+        for tag in chan.available_tags:
+            if 'team response' in tag.name.lower():
+                answered = tag
+        try: await thread.add_tags(answered)
+        except: print('Could not add answered tag')
 
-    try: await thread.add_tags(answered)
-    except: print('Could not add answered tag')
-    try: await thread.remove_tags(question)
-    except: print('Could not remove question tag')
+    if config.mod_role in [y.name.lower() for y in message.author.roles]:
+        chan = bot.get_channel(config.monitor_channel)
+        thread = chan.get_thread(message.channel.id)
+        for tag in chan.available_tags:
+            if 'moderator reply' in tag.name.lower():
+                answered = tag
+        try: await thread.add_tags(answered)
+        except: print('Could not add answered tag')
 
 @bot.event
 async def on_thread_create(thread):

@@ -5,7 +5,8 @@
     "emoji_channel": 0,
     "reply_channel": 0,
     "monitor_channel": 0,
-    "role_check": "role name",
+    "dev_role": "dev role",
+    "mod_role": "mod role"
     "upvote_emoji": ":thumbsup:",
     "downvote_emoji": ":thumbsdown:",
     "monitor_emoji": [],
