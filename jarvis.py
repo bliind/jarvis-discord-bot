@@ -61,8 +61,6 @@ async def send_devreply_embed(message, thread_open):
     sent = await output_channel.send(embed=embed)
     # try: await sent.add_reaction(config.upvote_emoji)
     # except: print('Could not add upvote emote')
-    # try: await sent.add_reaction(config.downvote_emoji)
-    # except: print('Could not add downvote emote')
     try: await sent.publish()
     except: print('Could not Publish message')
 
@@ -208,10 +206,10 @@ async def on_message(message):
 async def on_thread_create(thread):
     if thread.parent.type != discord.ChannelType.forum:
         return
-    if thread.parent.id not in config.auto_pin_channels:
-        return
-
+    if thread.parent.id in config.auto_pin_channels:
+        async for message in thread.history(limit=1, oldest_first=True):
+            await message.pin()
     async for message in thread.history(limit=1, oldest_first=True):
-        await message.pin()
+        await message.add_reaction(config.upvote_emoji)
 
 bot.run(config.token)

@@ -8,7 +8,6 @@
     "dev_role": "dev role",
     "mod_role": "mod role"
     "upvote_emoji": ":thumbsup:",
-    "downvote_emoji": ":thumbsdown:",
     "monitor_emoji": [],
     "remove_emoji": [],
     "auto_pin_channels": []
