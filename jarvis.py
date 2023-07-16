@@ -216,7 +216,7 @@ async def on_thread_create(thread):
     if thread.parent.id in config.auto_react_channels:
         async for message in thread.history(limit=1, oldest_first=True):
             await message.add_reaction(config.plus8_emoji)
-            if thread.parent.id != 1020477152380076062:
+            if thread.parent.id not in [1020477152380076062]:
                 sleep(1)
                 await message.add_reaction(config.minus8_emoji)
 
