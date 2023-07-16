@@ -12,5 +12,6 @@
     "minus8_emoji": "",
     "monitor_emoji": [],
     "remove_emoji": [],
-    "auto_pin_channels": []
+    "auto_pin_channels": [],
+    "auto_react_channels": []
 }
