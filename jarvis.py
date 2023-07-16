@@ -61,10 +61,10 @@ async def send_devreply_embed(message, thread_open):
     sent = await output_channel.send(embed=embed)
     try: await sent.add_reaction(config.plus8_emoji)
     except: print('Could not add plus8 emote')
-    try: await sent.add_reaction(config.minus8_emoji)
-    except: print('Could not add minus8 emote')
     try: await sent.publish()
     except: print('Could not Publish message')
+    try: await sent.add_reaction(config.minus8_emoji)
+    except: print('Could not add minus8 emote')
 
 ### Commands
 
