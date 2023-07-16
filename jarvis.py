@@ -2,6 +2,7 @@ import discord
 import json
 import os
 from discord import app_commands
+from time import sleep
 
 """
     J.A.R.V.I.S.
@@ -63,6 +64,7 @@ async def send_devreply_embed(message, thread_open):
     except: print('Could not add plus8 emote')
     try: await sent.publish()
     except: print('Could not Publish message')
+    sleep(1)
     try: await sent.add_reaction(config.minus8_emoji)
     except: print('Could not add minus8 emote')
 
