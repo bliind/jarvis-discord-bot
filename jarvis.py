@@ -60,13 +60,13 @@ async def send_devreply_embed(message, thread_open):
 
     embed.set_thumbnail(url=message.author.display_avatar.url)
     sent = await output_channel.send(embed=embed)
-    try: await sent.add_reaction(config.plus8_emoji)
-    except: print('Could not add plus8 emote')
+    try: await sent.add_reaction(config.plus_emoji)
+    except: print('Could not add plus emote')
     try: await sent.publish()
     except: print('Could not Publish message')
     sleep(1)
-    try: await sent.add_reaction(config.minus8_emoji)
-    except: print('Could not add minus8 emote')
+    try: await sent.add_reaction(config.minus_emoji)
+    except: print('Could not add minus emote')
 
 ### Commands
 
@@ -215,9 +215,9 @@ async def on_thread_create(thread):
             await message.pin()
     if thread.parent.id in config.auto_react_channels:
         async for message in thread.history(limit=1, oldest_first=True):
-            await message.add_reaction(config.plus8_emoji)
+            await message.add_reaction(config.plus_emoji)
             if thread.parent.id not in [1020477152380076062]:
                 sleep(1)
-                await message.add_reaction(config.minus8_emoji)
+                await message.add_reaction(config.minus_emoji)
 
 bot.run(config.token)
