@@ -7,11 +7,12 @@
     "monitor_channel": 0,
     "dev_role": "dev role",
     "mod_role": "mod role"
-    "upvote_emoji": ":thumbsup:",
-    "plus_emoji": "",
-    "minus_emoji": "",
+    "plus_emoji": ":thumbsup:",
+    "minus_emoji": ":thumbsdown:",
     "monitor_emoji": [],
     "remove_emoji": [],
     "auto_pin_channels": [],
-    "auto_react_channels": []
+    "auto_react_channels": [],
+    "new_acct_days": 14,
+    "new_acct_role": ""
 }
