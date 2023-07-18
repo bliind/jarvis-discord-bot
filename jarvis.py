@@ -1,7 +1,9 @@
 import discord
 import json
 import os
+import datetime
 from discord import app_commands
+from discord.ext import tasks
 from time import sleep
 
 """
@@ -61,12 +63,19 @@ BLUE = 3447003
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 bot = discord.Client(intents=intents)
 tree = app_commands.CommandTree(bot)
 
 ### Helper functions
 def get_message_link(p):
     return f'https://discord.com/channels/{p.guild_id}/{p.channel_id}/{p.message_id}'
+
+def check_member_age(member):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    diff = now - member.created_at
+
+    return diff.days > config.new_acct_days
 
 async def send_devreply_embed(message, thread_open):
     output_channel = await bot.fetch_channel(config.reply_channel)
@@ -94,6 +103,20 @@ async def send_devreply_embed(message, thread_open):
     sleep(1)
     try: await sent.add_reaction(config.minus_emoji)
     except: print('Could not add minus emote')
+
+### Tasks
+@tasks.loop(seconds=10)
+async def check_mute_roles():
+    try: server = [g for g in bot.guilds if g.id == config.server][0]
+    except: return
+    try: role = [r for r in server.roles if r.name == config.new_acct_role][0]
+    except: return
+
+    members = [m for m in server.members if role in m.roles]
+    if len(members) > 0:
+        for member in members:
+            if check_member_age(member):
+                await member.remove_roles(role)
 
 ### Commands
 @tree.context_menu(name='Post Dev Reply', guild=discord.Object(id=config.server))
@@ -174,11 +197,21 @@ async def first_command(interaction, message_link: str):
         await send_devreply_embed(message, thread_open)
 
 ### Events
-
 @bot.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=config.server))
+    check_mute_roles.start()
     print(f"{config.env.upper()} JARVIS is ready for duty")
+
+@bot.event
+async def on_member_join(member):
+    if not check_member_age(member):
+        try: server = [g for g in bot.guilds if g.id == config.server][0]
+        except: return
+        try: role = [r for r in server.roles if r.name == config.new_acct_role][0]
+        except: return
+
+        await member.add_roles(role)
 
 @bot.event
 async def on_raw_reaction_add(payload):
