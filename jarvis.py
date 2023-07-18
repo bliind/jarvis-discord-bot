@@ -105,7 +105,7 @@ async def send_devreply_embed(message, thread_open):
     except: print('Could not add minus emote')
 
 ### Tasks
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=3600)
 async def check_mute_roles():
     try: server = [g for g in bot.guilds if g.id == config.server][0]
     except: return
