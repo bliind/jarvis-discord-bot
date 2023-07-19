@@ -13,6 +13,7 @@
     "remove_emoji": [],
     "auto_pin_channels": [],
     "auto_react_channels": [],
+    "auto_react_emoji": [],
     "new_acct_days": 14,
     "new_acct_role": ""
 }
