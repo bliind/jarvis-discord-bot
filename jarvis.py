@@ -75,7 +75,7 @@ def check_member_age(member):
     now = datetime.datetime.now(datetime.timezone.utc)
     diff = now - member.created_at
 
-    return diff.days > config.new_acct_days
+    return diff.days >= config.new_acct_days
 
 async def send_devreply_embed(message, thread_open):
     output_channel = await bot.fetch_channel(config.reply_channel)
@@ -108,9 +108,13 @@ async def send_devreply_embed(message, thread_open):
 @tasks.loop(seconds=3600)
 async def check_mute_roles():
     try: server = [g for g in bot.guilds if g.id == config.server][0]
-    except: return
-    try: role = [r for r in server.roles if r.name == config.new_acct_role][0]
-    except: return
+    except:
+        print('Not on the right server?')
+        return
+    try: role = [r for r in server.roles if r.name.lower() == config.new_acct_role.lower()][0]
+    except:
+        print('New Account Role not found')
+        return
 
     members = [m for m in server.members if role in m.roles]
     if len(members) > 0:
@@ -207,9 +211,13 @@ async def on_ready():
 async def on_member_join(member):
     if not check_member_age(member):
         try: server = [g for g in bot.guilds if g.id == config.server][0]
-        except: return
-        try: role = [r for r in server.roles if r.name == config.new_acct_role][0]
-        except: return
+        except:
+            print('Not on the right server?')
+            return
+        try: role = [r for r in server.roles if r.name.lower() == config.new_acct_role.lower()][0]
+        except:
+            print('New Account Role not found')
+            return
 
         await member.add_roles(role)
 
