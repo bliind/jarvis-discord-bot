@@ -309,32 +309,6 @@ async def on_message(message):
         except: print('Could not add answered tag')
 
 @bot.event
-async def on_message_delete(message):
-    # checks
-    if message.channel.type != discord.ChannelType.public_thread:
-        return
-    if message.channel.parent.type != discord.ChannelType.forum:
-        return
-    if message.channel.parent.id != config.monitor_channel:
-        return
-
-    if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
-        chan = bot.get_channel(config.monitor_channel)
-        thread = chan.get_thread(message.channel.id)
-        async for tm in thread.history(limit=1, oldest_first=True):
-            thread_open = tm.content
-        reply_channel = bot.get_channel(config.reply_channel)
-        async for m in reply_channel.history(limit=50):
-            try:
-                description = m.embeds[0].description
-                if thread_open in description\
-                and message.content in description:
-                    await m.delete()
-                    break
-            except:
-                pass
-
-@bot.event
 async def on_thread_create(thread):
     if thread.parent.type != discord.ChannelType.forum:
         return
