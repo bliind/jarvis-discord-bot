@@ -77,8 +77,7 @@ def check_member_age(member):
 
     return diff.days >= config.new_acct_days
 
-async def send_devreply_embed(message, thread_open):
-    output_channel = await bot.fetch_channel(config.reply_channel)
+async def create_devreply_embed(message, thread_open):
     link = f"https://discord.com/channels/{config.server}/{message.channel.id}/{message.id}"
     embed = discord.Embed(
         colour=BLUE,
@@ -95,6 +94,12 @@ async def send_devreply_embed(message, thread_open):
     )
 
     embed.set_thumbnail(url=message.author.display_avatar.url)
+
+    return embed
+
+async def send_devreply_embed(message, thread_open):
+    output_channel = await bot.fetch_channel(config.reply_channel)
+    embed = await create_devreply_embed(message, thread_open)
     sent = await output_channel.send(embed=embed)
     try: await sent.add_reaction(config.plus_emoji)
     except: print('Could not add plus emote')
@@ -307,6 +312,73 @@ async def on_message(message):
                 answered = tag
         try: await thread.add_tags(answered)
         except: print('Could not add answered tag')
+
+@bot.event
+async def on_message_delete(message):
+    # checks
+    if message.channel.type != discord.ChannelType.public_thread:
+        return
+    if message.channel.parent.type != discord.ChannelType.forum:
+        return
+    if message.channel.parent.id != config.monitor_channel:
+        return
+
+    # ensure dev role post
+    if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
+        # pull the thread for the thread_open to find the answer post
+        chan = bot.get_channel(config.monitor_channel)
+        thread = chan.get_thread(message.channel.id)
+        async for tm in thread.history(limit=1, oldest_first=True):
+            thread_open = tm.content
+        # loop through reply channel to find the answer post
+        reply_channel = bot.get_channel(config.reply_channel)
+        async for m in reply_channel.history(limit=50):
+            try:
+                # match on as much as possible to avoid a false match
+                descs = m.embeds[0].description.split('------')
+                title = m.embeds[0].title
+                if message.channel.name == title\
+                and thread_open in descs[0]\
+                and str(message.author.id) in descs[1]\
+                and message.content in descs[1]:
+                    await m.delete()
+                    break
+            except:
+                pass
+
+@bot.event
+async def on_message_edit(before, after):
+    # checks
+    if before.channel.type != discord.ChannelType.public_thread:
+        return
+    if before.channel.parent.type != discord.ChannelType.forum:
+        return
+    if before.channel.parent.id != config.monitor_channel:
+        return
+
+    # ensure dev role post
+    if config.dev_role.lower() in [y.name.lower() for y in before.author.roles]:
+        # pull the thread for the thread_open to find the answer post
+        chan = bot.get_channel(config.monitor_channel)
+        thread = chan.get_thread(before.channel.id)
+        async for tm in thread.history(limit=1, oldest_first=True):
+            thread_open = tm.content
+        # loop through reply channel to find the answer post
+        reply_channel = bot.get_channel(config.reply_channel)
+        async for m in reply_channel.history(limit=50):
+            try:
+                # match on as much as possible to avoid a false match
+                descs = m.embeds[0].description.split('------')
+                title = m.embeds[0].title
+                if before.channel.name == title\
+                and thread_open in descs[0]\
+                and str(before.author.id) in descs[1]\
+                and before.content in descs[1]:
+                    embed = await create_devreply_embed(after, thread_open)
+                    await m.edit(embed=embed)
+                    break
+            except:
+                pass
 
 @bot.event
 async def on_thread_create(thread):
