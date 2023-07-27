@@ -334,13 +334,10 @@ async def on_message_delete(message):
         reply_channel = bot.get_channel(config.reply_channel)
         async for m in reply_channel.history(limit=50):
             try:
-                # match on as much as possible to avoid a false match
-                descs = m.embeds[0].description.split('------')
-                title = m.embeds[0].title
-                if message.channel.name == title\
-                and thread_open in descs[0]\
-                and str(message.author.id) in descs[1]\
-                and message.content in descs[1]:
+                # create an embed from the message and ensure this is the same
+                embed = await create_devreply_embed(message, thread_open)
+                if embed.title == m.embeds[0].title\
+                and embed.description.strip() == m.embeds[0].description.strip():
                     await m.delete()
                     break
             except:
@@ -367,15 +364,11 @@ async def on_message_edit(before, after):
         reply_channel = bot.get_channel(config.reply_channel)
         async for m in reply_channel.history(limit=50):
             try:
-                # match on as much as possible to avoid a false match
-                descs = m.embeds[0].description.split('------')
-                title = m.embeds[0].title
-                if before.channel.name == title\
-                and thread_open in descs[0]\
-                and str(before.author.id) in descs[1]\
-                and before.content in descs[1]:
-                    embed = await create_devreply_embed(after, thread_open)
-                    await m.edit(embed=embed)
+                befembed = await create_devreply_embed(before, thread_open)
+                if befembed.title == m.embeds[0].title\
+                and befembed.description.strip() == m.embeds[0].description.strip():
+                    newembed = await create_devreply_embed(after, thread_open)
+                    await m.edit(embed=newembed)
                     break
             except:
                 pass
