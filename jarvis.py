@@ -90,7 +90,7 @@ async def create_devreply_embed(message, thread_open):
             ***Replied to by <@{message.author.id}>:***
             {message.content}
 
-            [See reply here]({link})'''.replace(' '*12, '')
+            [See reply here]({link})'''.replace(' '*12, '').strip()
     )
 
     embed.set_thumbnail(url=message.author.display_avatar.url)
@@ -337,7 +337,7 @@ async def on_message_delete(message):
                 # create an embed from the message and ensure this is the same
                 embed = await create_devreply_embed(message, thread_open)
                 if embed.title == m.embeds[0].title\
-                and embed.description.strip() == m.embeds[0].description.strip():
+                and embed.description == m.embeds[0].description:
                     await m.delete()
                     break
             except:
@@ -366,7 +366,7 @@ async def on_message_edit(before, after):
             try:
                 befembed = await create_devreply_embed(before, thread_open)
                 if befembed.title == m.embeds[0].title\
-                and befembed.description.strip() == m.embeds[0].description.strip():
+                and befembed.description == m.embeds[0].description:
                     newembed = await create_devreply_embed(after, thread_open)
                     await m.edit(embed=newembed)
                     break
