@@ -209,6 +209,27 @@ async def first_command(interaction, message_link: str):
         # yes was picked, post
         await send_devreply_embed(message, thread_open)
 
+@tree.command(name='askdevs', description='Post the ask-the-team guidelines', guild=discord.Object(id=config.server))
+async def askdevs_command(interaction):
+    embed = discord.Embed(
+        colour=discord.Color.yellow(),
+        description = f'''
+            We have the right to remove any post we deem is not fit for this forum
+
+            _1:_ Please read the pinned FAQ post before asking your question.
+            _2:_ No "Leading" or "Suggestive" questions. Post your question, don't try to get the answer you want.
+            _3:_ Feedback, suggestions and bug reports should be posted in their respective channels. * <#1067974227816366150>, <#1020474756543303690> and <#1020475179085865000>
+            _4:_ Board State posts, "Is this a bug" posts, "why did this happen?" posts, and questions that can be answered by anyone in another channel are not allowed
+            _5:_ Repost Questions will be removed if there is a currently unlocked post with the same question
+            _6:_ If your post was Closed & Locked, it means it violated one of our guide lines.
+            _7:_ No "When is X happening" The developers will announce when things will go live, not in the Q&A forum.
+            _8:_ No questions about matchmaking.
+        '''.replace(' '*12, '').strip()
+    )
+
+    await interaction.channel.send(embed=embed)
+    await interaction.response.send_message('Done', ephemeral=True)
+
 ### Events
 @bot.event
 async def on_ready():
