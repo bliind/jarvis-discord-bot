@@ -13,8 +13,12 @@ from time import sleep
     A Discord bot for:
         - Auto-pinning forum OPs
         - Logging reaction usage of specified emotes
+        - Auto removing specified emote reactions
+        - Auto reacting with specified emotes
         - Publicly posting replies to forum threads
             from a specified role
+        - Managing a "new account" role for accounts
+            under 14 days old
 """
 
 class ConfirmView(discord.ui.View):
@@ -281,6 +285,17 @@ async def on_raw_reaction_remove(payload):
 
 @bot.event
 async def on_message(message):
+    # auto reaction
+    try:
+        if message.channel.id in config.full_auto_react_channels\
+        or message.channel.parent.id in config.full_auto_react_channels:
+            for emoji in config.full_auto_react_emoji:
+                await message.add_reaction(emoji)
+                sleep(0.5)
+    except AttributeError:
+        pass
+
+    # snap team reply logic
     # checks
     if message.channel.type != discord.ChannelType.public_thread:
         return
@@ -289,7 +304,6 @@ async def on_message(message):
     if message.channel.parent.id != config.monitor_channel:
         return
 
-    # snap team reply logic
     if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
         chan = bot.get_channel(config.monitor_channel)
         thread = chan.get_thread(message.channel.id)
