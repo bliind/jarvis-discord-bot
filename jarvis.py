@@ -81,6 +81,12 @@ def check_member_age(member):
 
     return diff.days >= config.new_acct_days
 
+def check_server_age(member):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    diff = now - member.joined_at
+
+    return (diff.total_seconds() / 3600) >= config.member_hours
+
 async def create_devreply_embed(message, thread_open):
     link = f"https://discord.com/channels/{config.server}/{message.channel.id}/{message.id}"
     embed = discord.Embed(
@@ -116,6 +122,7 @@ async def send_devreply_embed(message, thread_open):
 ### Tasks
 @tasks.loop(seconds=3600)
 async def check_mute_roles():
+    print('Checking New Account roles')
     try: server = [g for g in bot.guilds if g.id == config.server][0]
     except:
         print('Not on the right server?')
@@ -130,6 +137,26 @@ async def check_mute_roles():
         for member in members:
             if check_member_age(member):
                 await member.remove_roles(role)
+    print('Done!')
+
+@tasks.loop(seconds=3600)
+async def check_member_roles():
+    print('Checking Member roles')
+    try: server = [g for g in bot.guilds if g.id == config.server][0]
+    except:
+        print('Not on the right server?')
+        return
+    try: role = [r for r in server.roles if r.name.lower() == config.member_role.lower()][0]
+    except:
+        print('Member Role not found')
+        return
+
+    members = [m for m in server.members if role not in m.roles]
+    if len(members) > 0:
+        for member in members:
+            if check_server_age(member):
+                await member.add_roles(role)
+    print('Done!')
 
 ### Commands
 @tree.context_menu(name='Post Dev Reply', guild=discord.Object(id=config.server))
@@ -215,15 +242,15 @@ async def askdevs_command(interaction):
         colour=discord.Color.yellow(),
         description = f'''
             We have the right to remove any post we deem is not fit for this forum
+            Please read the pinned FAQ post before asking your question. 
 
-            _1:_ Please read the pinned FAQ post before asking your question.
-            _2:_ No "Leading" or "Suggestive" questions. Post your question, don't try to get the answer you want.
-            _3:_ Feedback, suggestions and bug reports should be posted in their respective channels. * <#1067974227816366150>, <#1020474756543303690> and <#1020475179085865000>
-            _4:_ Board State posts, "Is this a bug" posts, "why did this happen?" posts, and questions that can be answered by anyone in another channel are not allowed
-            _5:_ Repost Questions will be removed if there is a currently unlocked post with the same question
-            _6:_ If your post was Closed & Locked, it means it violated one of our guide lines.
-            _7:_ No "When is X happening" The developers will announce when things will go live, not in the Q&A forum.
-            _8:_ No questions about matchmaking.
+            _1:_ No "Leading" or "Suggestive" questions. Post your question, don't try to get the answer you want.
+            _2:_ Feedback, suggestions and bug reports should be posted in their respective channels. * <#1067974227816366150>, <#1020474756543303690> and <#1020475179085865000>
+            _3:_ Board State posts, "Is this a bug" posts, "why did this happen?" posts, and questions that can be answered by anyone in another channel are not allowed
+            _4:_ Repost Questions will be removed if there is a currently unlocked post with the same question
+            _5:_ If your post was Closed & Locked, it means it violated one of our guide lines.
+            _6:_ No "When is X happening" The developers will announce when things will go live, not in the Q&A forum.
+            _7:_ No questions about matchmaking.
         '''.replace(' '*12, '').strip()
     )
 
@@ -234,8 +261,9 @@ async def askdevs_command(interaction):
 @bot.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=config.server))
-    check_mute_roles.start()
     print(f"{config.env.upper()} JARVIS is ready for duty")
+    check_mute_roles.start()
+    check_member_roles.start()
 
 @bot.event
 async def on_member_join(member):
