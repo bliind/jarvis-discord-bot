@@ -12,8 +12,9 @@
     "monitor_emoji": [],
     "remove_emoji": [],
     "auto_pin_channels": [],
-    "auto_react_channels": [],
-    "auto_react_emoji": [],
+    "forum_op_auto_react": {
+        "channelID": [":thumbsup:"]
+    }
     "full_auto_react_channels": [],
     "full_auto_react_emoji": [],
     "member_hours": 72,

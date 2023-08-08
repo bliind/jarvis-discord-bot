@@ -448,9 +448,10 @@ async def on_thread_create(thread):
     if thread.parent.id in config.auto_pin_channels:
         async for message in thread.history(limit=1, oldest_first=True):
             await message.pin()
-    if thread.parent.id in config.auto_react_channels:
+
+    if str(thread.parent.id) in config.forum_op_auto_react:
         async for message in thread.history(limit=1, oldest_first=True):
-            for emoji in config.auto_react_emoji:
+            for emoji in config.forum_op_auto_react[str(thread.parent.id)]:
                 await message.add_reaction(emoji)
                 sleep(0.5)
 
