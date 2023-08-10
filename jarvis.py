@@ -340,17 +340,20 @@ async def on_raw_reaction_remove(payload):
 @bot.event
 async def on_message(message):
     # caps checking
-    author_roles = [y.name.lower() for y in message.author.roles]
-    if config.dev_role.lower() not in author_roles\
-    and config.mod_role.lower() not in author_roles:
-        alph = list(filter(str.isalpha, message.content))
-        if len(alph) >= 4:
-            percent = (sum(map(str.isupper, alph)) / len(alph) * 100)
-            if percent >= config.caps_prot_percent:
-                sent = await message.reply(config.caps_prot_message)
-                await message.delete()
-                sleep(5)
-                await sent.delete()
+    try:
+        author_roles = [y.name.lower() for y in message.author.roles]
+        if config.dev_role.lower() not in author_roles\
+        and config.mod_role.lower() not in author_roles:
+            alph = list(filter(str.isalpha, message.content))
+            if len(alph) >= 4:
+                percent = (sum(map(str.isupper, alph)) / len(alph) * 100)
+                if percent >= config.caps_prot_percent:
+                    sent = await message.reply(config.caps_prot_message)
+                    await message.delete()
+                    sleep(5)
+                    await sent.delete()
+    except AttributeError:
+        pass
 
     # auto reaction
     try:
