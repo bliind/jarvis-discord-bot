@@ -1,6 +1,7 @@
 import discord
 import json
 import os
+import re
 import datetime
 from discord import app_commands
 from discord.ext import tasks
@@ -118,6 +119,29 @@ async def send_devreply_embed(message, thread_open):
     sleep(1)
     try: await sent.add_reaction(config.minus_emoji)
     except: print('Could not add minus emote')
+
+async def check_caps_percent(message):
+    try:
+        author_roles = [y.name.lower() for y in message.author.roles]
+        for role in config.caps_prot_exclude_roles:
+            if role in author_roles:
+                return
+        if message.channel.id in config.caps_prot_exclude_channels:
+            return
+
+        # remove emotes
+        content = re.sub(r':[\w\d]+:', '', message.content)
+
+        alph = list(filter(str.isalpha, content))
+        if len(alph) >= 4:
+            percent = (sum(map(str.isupper, alph)) / len(alph) * 100)
+            if percent >= config.caps_prot_percent:
+                sent = await message.reply(config.caps_prot_message)
+                await message.delete()
+                sleep(5)
+                await sent.delete()
+    except AttributeError:
+        pass
 
 ### Tasks
 @tasks.loop(seconds=3600)
@@ -340,20 +364,7 @@ async def on_raw_reaction_remove(payload):
 @bot.event
 async def on_message(message):
     # caps checking
-    try:
-        author_roles = [y.name.lower() for y in message.author.roles]
-        if config.dev_role.lower() not in author_roles\
-        and config.mod_role.lower() not in author_roles:
-            alph = list(filter(str.isalpha, message.content))
-            if len(alph) >= 4:
-                percent = (sum(map(str.isupper, alph)) / len(alph) * 100)
-                if percent >= config.caps_prot_percent:
-                    sent = await message.reply(config.caps_prot_message)
-                    await message.delete()
-                    sleep(5)
-                    await sent.delete()
-    except AttributeError:
-        pass
+    await check_caps_percent(message)
 
     # auto reaction
     try:
