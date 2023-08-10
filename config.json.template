@@ -17,6 +17,8 @@
     }
     "full_auto_react_channels": [],
     "full_auto_react_emoji": [],
+    "caps_prot_percent": 80,
+    "caps_prot_message": "Too many caps!",
     "member_hours": 72,
     "member_role": "member",
     "new_acct_days": 14,
