@@ -45,7 +45,6 @@ class ConfirmView(discord.ui.View):
         await self.on_timeout()
         self.stop()
 
-
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
@@ -174,8 +173,12 @@ async def check_member_roles():
     except:
         print('Member Role not found')
         return
+    try: new_acct_role = [r for r in server.roles if r.name.lower() == config.new_acct_role.lower()][0]
+    except:
+        print('New Account Role not found')
+        return
 
-    members = [m for m in server.members if role not in m.roles]
+    members = [m for m in server.members if role not in m.roles and new_acct_role not in m.roles]
     if len(members) > 0:
         for member in members:
             if check_server_age(member):
