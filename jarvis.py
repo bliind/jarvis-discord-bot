@@ -178,11 +178,12 @@ async def check_member_roles():
         print('New Account Role not found')
         return
 
-    members = [m for m in server.members if role not in m.roles and new_acct_role not in m.roles]
+    members = [m for m in server.members if role not in m.roles]
     if len(members) > 0:
         for member in members:
             if check_server_age(member):
-                await member.add_roles(role)
+                if new_acct_role not in member.roles:
+                    await member.add_roles(role)
     print('Done!')
 
 ### Commands
