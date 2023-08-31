@@ -5,7 +5,7 @@
     "emoji_channel": 0,
     "reply_channel": 0,
     "monitor_channel": 0,
-    "dev_role": "dev role",
+    "dev_role": ["dev role"],
     "mod_role": "mod role"
     "plus_emoji": ":thumbsup:",
     "minus_emoji": ":thumbsdown:",
