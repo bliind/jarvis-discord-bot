@@ -87,6 +87,12 @@ def check_server_age(member):
 
     return (diff.total_seconds() / 3600) >= config.member_hours
 
+def check_is_dev(member):
+    for dev_role in config.dev_role:
+        if dev_role.lower() in [y.name.lower() for y in member.roles]:
+            return True
+    return False
+
 async def create_devreply_embed(message, thread_open):
     link = f"https://discord.com/channels/{config.server}/{message.channel.id}/{message.id}"
     embed = discord.Embed(
@@ -197,7 +203,7 @@ async def dev_reply_command(interaction, message: discord.Message):
     # check message is from snap team
     guild = bot.get_guild(config.server)
     author = await guild.fetch_member(message.author.id)
-    if config.dev_role.lower() not in [y.name.lower() for y in author.roles]:
+    if not check_is_dev(author):
         return
 
     # get the channel it's actually posted to
@@ -245,7 +251,7 @@ async def first_command(interaction, message_link: str):
     # check message is from snap team
     guild = bot.get_guild(config.server)
     author = await guild.fetch_member(message.author.id)
-    if config.dev_role.lower() not in [y.name.lower() for y in author.roles]:
+    if not check_is_dev(author):
         return
 
     # get the channel it's actually posted to
@@ -389,7 +395,7 @@ async def on_message(message):
     if message.channel.parent.id != config.monitor_channel:
         return
 
-    if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
+    if check_is_dev(message.author):
         chan = bot.get_channel(config.monitor_channel)
         thread = chan.get_thread(message.channel.id)
         async for m in thread.history(limit=1, oldest_first=True):
@@ -423,7 +429,7 @@ async def on_message_delete(message):
         return
 
     # ensure dev role post
-    if config.dev_role.lower() in [y.name.lower() for y in message.author.roles]:
+    if check_is_dev(message.author):
         # pull the thread for the thread_open to find the answer post
         chan = bot.get_channel(config.monitor_channel)
         thread = chan.get_thread(message.channel.id)
@@ -453,7 +459,7 @@ async def on_message_edit(before, after):
         return
 
     # ensure dev role post
-    if config.dev_role.lower() in [y.name.lower() for y in before.author.roles]:
+    if check_is_dev(before.author):
         # pull the thread for the thread_open to find the answer post
         chan = bot.get_channel(config.monitor_channel)
         thread = chan.get_thread(before.channel.id)
