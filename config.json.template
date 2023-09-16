@@ -6,7 +6,7 @@
     "reply_channel": 0,
     "monitor_channel": 0,
     "dev_role": ["dev role"],
-    "mod_role": "mod role"
+    "mod_role": ["mod role"],
     "plus_emoji": ":thumbsup:",
     "minus_emoji": ":thumbsdown:",
     "monitor_emoji": [],
@@ -14,9 +14,10 @@
     "auto_pin_channels": [],
     "forum_op_auto_react": {
         "channelID": [":thumbsup:"]
-    }
+    },
     "full_auto_react_channels": [],
     "full_auto_react_emoji": [],
+    "auto_publish_channels": [],
     "caps_prot_percent": 80,
     "caps_prot_message": "Too many caps!",
     "caps_prot_exclude_channels": [],

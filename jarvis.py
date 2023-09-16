@@ -93,6 +93,12 @@ def check_is_dev(member):
             return True
     return False
 
+def check_is_mod(member):
+    for mod_role in config.mod_role:
+        if mod_role.lower() in [y.name.lower() for y in member.roles]:
+            return True
+    return False
+
 async def create_devreply_embed(message, thread_open):
     link = f"https://discord.com/channels/{config.server}/{message.channel.id}/{message.id}"
     embed = discord.Embed(
@@ -291,6 +297,65 @@ async def askdevs_command(interaction):
     await interaction.channel.send(embed=embed)
     await interaction.response.send_message('Done', ephemeral=True)
 
+@tree.command(name='series', description='Explain the Card Series', guild=discord.Object(id=config.server))
+async def series_command(interaction: discord.Interaction, ping: discord.User = None):
+    message=f'''
+        {ping.mention if ping else ''}
+        The card Series (Pools) are the groupings that cards are in. You can only open cards on the collection track from a given Series once you hit the collection level (CL) necessary to unlock them. You can find your collection level underneath your avatar on the Home Screen in the green bar (mobile) or on the top navigation bar titled "Level" (PC).
+        - Series 1 - CL 18-214
+        - Series 2 - CL 222-474
+        - Series 3 - CL 486+
+        - Series 4/5 - CL 610+ (Spotlight Caches)
+
+        Series 4 and 5 cards can also be obtained from the Token Shop starting at CL 500
+    '''.replace(' '*8, '').strip()
+    await interaction.channel.send(message)
+    await interaction.response.send_message('Done', ephemeral=True)
+
+@tree.command(name='reset', description='Explain rank reset', guild=discord.Object(id=config.server))
+async def reset_command(interaction: discord.Interaction, ping: discord.User = None):
+    message=f'''
+        {ping.mention if ping else ''}
+        Rank reset works as follows:
+        - Deduct 30 ranks from your final rank in the previous season
+        - Round down to the closest integer divisible by 5
+        - Add 3 bonus ranks
+
+        Rank 10, Iron, is the rank floor and you can not go below it.
+        No matter how high you rank at Infinite, you will always reset to rank 73.
+
+        _Example: If you are rank 77, your rank would be reset to 48 (77-30=47, rounded down to 45, +3 to 48)_
+
+    '''.replace(' '*8, '').strip()
+    await interaction.channel.send(message)
+    await interaction.response.send_message('Done', ephemeral=True)
+
+@tree.command(name='bigbads', description='Explain Big Bads™', guild=discord.Object(id=config.server))
+async def bigbad_command(interaction: discord.Interaction, ping: discord.User = None):
+    message=f'''
+        {ping.mention if ping else ''}
+        The "big bads" are cards that are not subject to Series drops, and are therefore "permanently Series 5" (subject to change by Second Dinner). A card is a big bad only if Second Dinner announces that the card is one, there is no other criteria for it.
+        The current Big Bads are Thanos, Galactus, Kang, and the High Evolutionary.
+    '''.replace(' '*8, '').strip()
+    await interaction.channel.send(message)
+    await interaction.response.send_message('Done', ephemeral=True)
+
+@tree.command(name='priority', description='Explain Priority', guild=discord.Object(id=config.server))
+async def priority_command(interaction: discord.Interaction, ping: discord.User = None):
+    message=f'''
+        {ping.mention if ping else ''}
+        **The player with priority will have a glowing border around their name** 
+ 
+        Priority is determined using the following steps:
+        1. Priority goes to the player who is winning the most locations. If there is a tie then,
+        2. Priority goes to the player who has the higher point differential (this calculation is inverted on Bar With No Name). If there is a tie then,
+        3. Priority goes to a player randomly.
+
+        Priority is checked at the beginning of every turn, so if you are at a complete tie two turns in a row, it will randomly assign priority on the second turn independent of who had priority in the first turn.
+    '''.replace(' '*8, '').strip()
+    await interaction.channel.send(message)
+    await interaction.response.send_message('Done', ephemeral=True)
+
 @tree.command(name='reload_config', description='Reload the bot config', guild=discord.Object(id=config.server))
 async def reload_config_command(interaction):
     load_config()
@@ -386,6 +451,15 @@ async def on_message(message):
     except AttributeError:
         pass
 
+    # auto publish
+    try:
+        if message.channel.id in config.auto_publish_channels:
+            await message.publish()
+    except Exception as e:
+        print('Auto-publish error:')
+        print(e)
+        pass
+
     # snap team reply logic
     # checks
     if message.channel.type != discord.ChannelType.public_thread:
@@ -409,7 +483,7 @@ async def on_message(message):
         try: await thread.add_tags(answered)
         except: print('Could not add answered tag')
 
-    if config.mod_role in [y.name.lower() for y in message.author.roles]:
+    if check_is_mod(message.author):
         chan = bot.get_channel(config.monitor_channel)
         thread = chan.get_thread(message.channel.id)
         for tag in chan.available_tags:
