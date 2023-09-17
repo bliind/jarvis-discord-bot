@@ -25,5 +25,8 @@
     "member_hours": 72,
     "member_role": "member",
     "new_acct_days": 14,
-    "new_acct_role": ""
+    "new_acct_role": "",
+    "reaction_message_id": 0,
+    "reaction_message_emoji_name": "thumbsup",
+    "reaction_message_threshold": 98
 }

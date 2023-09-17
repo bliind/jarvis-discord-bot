@@ -3,6 +3,7 @@ import json
 import os
 import re
 import datetime
+import random
 from discord import app_commands
 from discord.ext import tasks
 from time import sleep
@@ -299,6 +300,7 @@ async def askdevs_command(interaction):
 
 @tree.command(name='series', description='Explain the Card Series', guild=discord.Object(id=config.server))
 async def series_command(interaction: discord.Interaction, ping: discord.User = None):
+    print(f'{interaction.user.name} used /series with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         The card Series (Pools) are the groupings that cards are in. You can only open cards on the collection track from a given Series once you hit the collection level (CL) necessary to unlock them. You can find your collection level underneath your avatar on the Home Screen in the green bar (mobile) or on the top navigation bar titled "Level" (PC).
@@ -314,6 +316,7 @@ async def series_command(interaction: discord.Interaction, ping: discord.User = 
 
 @tree.command(name='reset', description='Explain rank reset', guild=discord.Object(id=config.server))
 async def reset_command(interaction: discord.Interaction, ping: discord.User = None):
+    print(f'{interaction.user.name} used /reset with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         Rank reset works as follows:
@@ -332,6 +335,7 @@ async def reset_command(interaction: discord.Interaction, ping: discord.User = N
 
 @tree.command(name='bigbads', description='Explain Big Bads™', guild=discord.Object(id=config.server))
 async def bigbad_command(interaction: discord.Interaction, ping: discord.User = None):
+    print(f'{interaction.user.name} used /bigbads with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         The "big bads" are cards that are not subject to Series drops, and are therefore "permanently Series 5" (subject to change by Second Dinner). A card is a big bad only if Second Dinner announces that the card is one, there is no other criteria for it.
@@ -342,6 +346,7 @@ async def bigbad_command(interaction: discord.Interaction, ping: discord.User = 
 
 @tree.command(name='priority', description='Explain Priority', guild=discord.Object(id=config.server))
 async def priority_command(interaction: discord.Interaction, ping: discord.User = None):
+    print(f'{interaction.user.name} used /priority with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         **The player with priority will have a glowing border around their name** 
@@ -411,6 +416,21 @@ async def on_raw_reaction_add(payload):
         message = await channel.fetch_message(payload.message_id)
         user = await bot.fetch_user(payload.user_id)
         await message.remove_reaction(payload.emoji.name, user)
+
+    if payload.message_id == config.reaction_message_id:
+        channel = bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        for reaction in message.reactions:
+            if reaction.emoji.name == config.reaction_message_emoji_name: break
+
+        if reaction.emoji.name == config.reaction_message_emoji_name\
+        and reaction.count > config.reaction_message_threshold:
+            users = []
+            async for user in reaction.users():
+                users.append(user)
+            remove = random.choice(users)
+            await message.remove_reaction(payload.emoji, remove)
+
 
 @bot.event
 async def on_raw_reaction_remove(payload):
