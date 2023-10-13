@@ -300,7 +300,6 @@ async def askdevs_command(interaction):
 
 @tree.command(name='series', description='Explain the Card Series', guild=discord.Object(id=config.server))
 async def series_command(interaction: discord.Interaction, ping: discord.User = None):
-    print(f'{interaction.user.name} used /series with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         The card Series (Pools) are the groupings that cards are in. You can only open cards on the collection track from a given Series once you hit the collection level (CL) necessary to unlock them. You can find your collection level underneath your avatar on the Home Screen in the green bar (mobile) or on the top navigation bar titled "Level" (PC).
@@ -311,12 +310,10 @@ async def series_command(interaction: discord.Interaction, ping: discord.User = 
 
         Series 4 and 5 cards can also be obtained from the Token Shop starting at CL 500
     '''.replace(' '*8, '').strip()
-    await interaction.channel.send(message)
-    await interaction.response.send_message('Done', ephemeral=True)
+    await interaction.response.send_message(message)
 
 @tree.command(name='reset', description='Explain rank reset', guild=discord.Object(id=config.server))
 async def reset_command(interaction: discord.Interaction, ping: discord.User = None):
-    print(f'{interaction.user.name} used /reset with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         Rank reset works as follows:
@@ -330,23 +327,19 @@ async def reset_command(interaction: discord.Interaction, ping: discord.User = N
         _Example: If you are rank 77, your rank would be reset to 48 (77-30=47, rounded down to 45, +3 to 48)_
 
     '''.replace(' '*8, '').strip()
-    await interaction.channel.send(message)
-    await interaction.response.send_message('Done', ephemeral=True)
+    await interaction.response.send_message(message)
 
 @tree.command(name='bigbads', description='Explain Big Bads™', guild=discord.Object(id=config.server))
 async def bigbad_command(interaction: discord.Interaction, ping: discord.User = None):
-    print(f'{interaction.user.name} used /bigbads with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         The "big bads" are cards that are not subject to Series drops, and are therefore "permanently Series 5" (subject to change by Second Dinner). A card is a big bad only if Second Dinner announces that the card is one, there is no other criteria for it.
         The current Big Bads are Thanos, Galactus, Kang, and the High Evolutionary.
     '''.replace(' '*8, '').strip()
-    await interaction.channel.send(message)
-    await interaction.response.send_message('Done', ephemeral=True)
+    await interaction.response.send_message(message)
 
 @tree.command(name='priority', description='Explain Priority', guild=discord.Object(id=config.server))
 async def priority_command(interaction: discord.Interaction, ping: discord.User = None):
-    print(f'{interaction.user.name} used /priority with arg: {ping}')
     message=f'''
         {ping.mention if ping else ''}
         **The player with priority will have a glowing border around their name** 
@@ -358,8 +351,7 @@ async def priority_command(interaction: discord.Interaction, ping: discord.User 
 
         Priority is checked at the beginning of every turn, so if you are at a complete tie two turns in a row, it will randomly assign priority on the second turn independent of who had priority in the first turn.
     '''.replace(' '*8, '').strip()
-    await interaction.channel.send(message)
-    await interaction.response.send_message('Done', ephemeral=True)
+    await interaction.response.send_message(message)
 
 @tree.command(name='reload_config', description='Reload the bot config', guild=discord.Object(id=config.server))
 async def reload_config_command(interaction):
