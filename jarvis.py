@@ -4,6 +4,7 @@ import os
 import re
 import datetime
 import random
+from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
 from time import sleep
@@ -124,13 +125,13 @@ async def send_devreply_embed(message, thread_open):
     output_channel = await bot.fetch_channel(config.reply_channel)
     embed = await create_devreply_embed(message, thread_open)
     sent = await output_channel.send(embed=embed)
-    try: await sent.add_reaction(config.plus_emoji)
-    except: print('Could not add plus emote')
     try: await sent.publish()
     except: print('Could not Publish message')
-    sleep(1)
-    try: await sent.add_reaction(config.minus_emoji)
-    except: print('Could not add minus emote')
+    # try: await sent.add_reaction(config.plus_emoji)
+    # except: print('Could not add plus emote')
+    # sleep(1)
+    # try: await sent.add_reaction(config.minus_emoji)
+    # except: print('Could not add minus emote')
 
 async def check_caps_percent(message):
     try:
@@ -353,6 +354,14 @@ async def priority_command(interaction: discord.Interaction, ping: discord.User 
     '''.replace(' '*8, '').strip()
     await interaction.response.send_message(message)
 
+@tree.command(name='update_config', description='Update ReactionRole config', guild=discord.Object(id=config.server))
+async def update_config_command(interaction):
+    modal = ConfigModal(config.reaction_role_reaction, config.reaction_role_role)
+    await interaction.response.send_modal(modal)
+    await modal.wait()
+    config.reaction_role_reaction = modal.reaction.value
+    config.reaction_role_role = modal.role.value
+
 @tree.command(name='reload_config', description='Reload the bot config', guild=discord.Object(id=config.server))
 async def reload_config_command(interaction):
     load_config()
@@ -409,7 +418,24 @@ async def on_raw_reaction_add(payload):
         user = await bot.fetch_user(payload.user_id)
         await message.remove_reaction(payload.emoji.name, user)
 
+    if config.reaction_role_active and\
+    payload.member.id in config.reaction_role_users and\
+    payload.emoji.name.lower() == config.reaction_role_reaction:
+        # role reaction
+        channel = bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        user = await bot.fetch_user(payload.user_id)
+        await message.remove_reaction(payload.emoji, user)
+
+        try: server = [g for g in bot.guilds if g.id == config.server][0]
+        except: return
+        try: role = [r for r in server.roles if r.name.lower() == config.reaction_role_role.lower()][0]
+        except: return
+
+        await message.author.add_roles(role)
+
     if payload.message_id == config.reaction_message_id:
+        # under 100
         channel = bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         for reaction in message.reactions:

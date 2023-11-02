@@ -28,5 +28,8 @@
     "new_acct_role": "",
     "reaction_message_id": 0,
     "reaction_message_emoji_name": "thumbsup",
-    "reaction_message_threshold": 98
+    "reaction_message_threshold": 98,
+    "reaction_role_reaction": "uselessrock",
+    "reaction_role_role": "friends",
+    "reaction_role_users": [145971157902950401]
 }
