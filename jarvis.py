@@ -283,16 +283,26 @@ async def askdevs_command(interaction):
     embed = discord.Embed(
         colour=discord.Color.yellow(),
         description = f'''
-            We have the right to remove any post we deem is not fit for this forum
-            Please read the pinned FAQ post before asking your question. 
+            ## Please, read the FAQ before asking your question.
 
-            _1:_ No "Leading" or "Suggestive" questions. Post your question, don't try to get the answer you want.
-            _2:_ Feedback, suggestions and bug reports should be posted in their respective channels. * <#1067974227816366150>, <#1020474756543303690> and <#1020475179085865000>
-            _3:_ Board State posts, "Is this a bug" posts, "why did this happen?" posts, and questions that can be answered by anyone in another channel are not allowed
-            _4:_ Repost Questions will be removed if there is a currently unlocked post with the same question
-            _5:_ If your post was Closed & Locked, it means it violated one of our guide lines.
-            _6:_ No "When is X happening" The developers will announce when things will go live, not in the Q&A forum.
-            _7:_ No questions about matchmaking.
+            * **1. All the general rules from the server apply here:**
+              * Don't ping the Developers or other users.
+              * Be respectful and polite when doing your question, etc.
+            * **2. No "Leading", "Suggestive" or "Rhetorical" questions. Post your question, don't try to get the answer you want.**
+            * **3. Feedback, Game discussions and Bug Reports should be posted in their respective channels:**
+              * <#1067974227816366150>  
+              * <#1020474756543303690>   
+              * <#1020475179085865000>  
+            * **4. No questions that can be answered by anyone in another channel. (Things we already know.)**
+              * Board state posts
+              * "Is this a bug" posts
+              * "Why did this happen?" posts.
+            * **5. No "When is X happening". The developers will announce when things will go live, not in a Q&A forum.**
+            * **6. Repost Questions will be removed if there is a currently unlocked post with the same question.**
+            * **7. No questions containing datamined content or spoilers.** Your question will be deleted on the spot and you will get a warn, even if you spoiler tag it.
+            * **8. No questions about matchmaking in ladder or conquest.**
+
+            If your post was Closed, it means it violated one, or more, of our guide lines.
         '''.replace(' '*12, '').strip()
     )
 
