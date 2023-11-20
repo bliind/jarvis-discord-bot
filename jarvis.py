@@ -614,4 +614,14 @@ async def on_thread_create(thread):
                 await message.add_reaction(emoji)
                 sleep(0.5)
 
+@bot.event
+async def on_member_update(before, after):
+    # remove Booster-specific roles from non-boosters
+    b_roles = [r.name for r in before.roles]
+    a_roles = [r.name for r in after.roles]
+    removed = [r for r in b_roles if r not in a_roles]
+    if '[Booster]' in removed:
+        remove = [a for a in after.roles if a.name.startswith('[B]')]
+        if remove: await after.remove_roles(*remove)
+
 bot.run(config.token)
