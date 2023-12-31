@@ -314,10 +314,10 @@ async def series_command(interaction: discord.Interaction, ping: discord.User = 
     message=f'''
         {ping.mention if ping else ''}
         The card Series (Pools) are the groupings that cards are in. You can only open cards on the collection track from a given Series once you hit the collection level (CL) necessary to unlock them. You can find your collection level underneath your avatar on the Home Screen in the green bar (mobile) or on the top navigation bar titled "Level" (PC).
-        - Series 1 - CL 18-214
-        - Series 2 - CL 222-474
-        - Series 3 - CL 486+
-        - Series 4/5 - CL 610+ (Spotlight Caches)
+        - Series 1 - CL 22-202
+        - Series 2 - CL 208-450
+        - Series 3 - CL 462+
+        - Series 4/5 - CL 610+ (Spotlight Keys)
 
         Series 4 and 5 cards can also be obtained from the Token Shop starting at CL 500
     '''.replace(' '*8, '').strip()
