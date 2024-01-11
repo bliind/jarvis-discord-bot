@@ -288,19 +288,18 @@ async def askdevs_command(interaction):
             * **1. All the general rules from the server apply here:**
               * Don't ping the Developers or other users.
               * Be respectful and polite when doing your question, etc.
-            * **2. No "Leading", "Suggestive" or "Rhetorical" questions. Post your question, don't try to get the answer you want.**
-            * **3. Feedback, Game discussions and Bug Reports should be posted in their respective channels:**
+            * **2. Feedback, Game discussions and Bug Reports should be posted in their respective channels:**
               * <#1067974227816366150>  
               * <#1020474756543303690>   
               * <#1020475179085865000>  
-            * **4. No questions that can be answered by anyone in another channel. (Things we already know.)**
+            * **3. No questions that can be answered by anyone in another channel. (Things we already know.)**
               * Board state posts
               * "Is this a bug" posts
               * "Why did this happen?" posts.
-            * **5. No "When is X happening". The developers will announce when things will go live, not in a Q&A forum.**
-            * **6. Repost Questions will be removed if there is a currently unlocked post with the same question.**
-            * **7. No questions containing datamined content or spoilers.** Your question will be deleted on the spot and you will get a warn, even if you spoiler tag it.
-            * **8. No questions about matchmaking in ladder or conquest.**
+            * **4. No "When is X happening". The developers will announce when things will go live, not in a Q&A forum.**
+            * **5. Repost Questions will be removed if there is a currently unlocked post with the same question.**
+            * **6. No questions containing datamined content or spoilers.** Your question will be deleted on the spot and you will get a warn, even if you spoiler tag it.
+            * **7. No questions about matchmaking in ladder or conquest.**
 
             If your post was Closed, it means it violated one, or more, of our guide lines.
         '''.replace(' '*12, '').strip()
