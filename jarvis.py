@@ -157,6 +157,17 @@ async def check_caps_percent(message):
         pass
 
 ### Tasks
+@tasks.loop(seconds=300)
+async def delete_old_streaming_posts():
+    try:
+        chan = bot.get_channel(config.streaming_post_channel)
+        cutoff_time = discord.utils.utcnow() - datetime.timedelta(seconds=config.streaming_post_time_limit)
+        async for message in chan.history(limit=100, before=cutoff_time):
+            await message.delete()
+    except Exception as e:
+        print('error during delete_old_streaming_posts:')
+        print(e)
+
 @tasks.loop(seconds=3600)
 async def check_mute_roles():
     print('Checking New Account roles')
@@ -383,6 +394,7 @@ async def on_ready():
     print(f"{config.env.upper()} JARVIS is ready for duty")
     check_mute_roles.start()
     check_member_roles.start()
+    delete_old_streaming_posts.start()
 
 @bot.event
 async def on_member_join(member):
