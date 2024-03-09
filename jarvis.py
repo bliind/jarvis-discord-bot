@@ -163,7 +163,8 @@ async def delete_old_streaming_posts():
         chan = bot.get_channel(config.streaming_post_channel)
         cutoff_time = discord.utils.utcnow() - datetime.timedelta(seconds=config.streaming_post_time_limit)
         async for message in chan.history(limit=100, before=cutoff_time):
-            await message.delete()
+            if message.author.id != config.streaming_post_bot:
+                await message.delete()
     except Exception as e:
         print('error during delete_old_streaming_posts:')
         print(e)
