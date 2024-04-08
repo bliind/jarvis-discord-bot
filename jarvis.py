@@ -101,6 +101,10 @@ def check_is_mod(member):
             return True
     return False
 
+def timestamp():
+    now = datetime.datetime.now()
+    return int(round(now.timestamp()))
+
 async def create_devreply_embed(message, thread_open):
     link = f"https://discord.com/channels/{config.server}/{message.channel.id}/{message.id}"
     embed = discord.Embed(
@@ -166,12 +170,11 @@ async def delete_old_streaming_posts():
             if message.author.id != config.streaming_post_bot:
                 await message.delete()
     except Exception as e:
-        print('error during delete_old_streaming_posts:')
+        print(f'{timestamp()}: Error during delete_old_streaming_posts:')
         print(e)
 
 @tasks.loop(seconds=3600)
 async def check_mute_roles():
-    print('Checking New Account roles')
     try: server = [g for g in bot.guilds if g.id == config.server][0]
     except:
         print('Not on the right server?')
@@ -181,16 +184,18 @@ async def check_mute_roles():
         print('New Account Role not found')
         return
 
-    members = [m for m in server.members if role in m.roles]
-    if len(members) > 0:
-        for member in members:
-            if check_member_age(member):
-                await member.remove_roles(role)
-    print('Done!')
+    try:
+        members = [m for m in server.members if role in m.roles]
+        if len(members) > 0:
+            for member in members:
+                if check_member_age(member):
+                    await member.remove_roles(role)
+    except Exception as e:
+        print(f'{timestamp()}: Failed to check New Account roles')
+        print(e)
 
 @tasks.loop(seconds=3600)
 async def check_member_roles():
-    print('Checking Member roles')
     try: server = [g for g in bot.guilds if g.id == config.server][0]
     except:
         print('Not on the right server?')
@@ -204,13 +209,16 @@ async def check_member_roles():
         print('New Account Role not found')
         return
 
-    members = [m for m in server.members if role not in m.roles]
-    if len(members) > 0:
-        for member in members:
-            if check_server_age(member):
-                if new_acct_role not in member.roles:
-                    await member.add_roles(role)
-    print('Done!')
+    try:
+        members = [m for m in server.members if role not in m.roles]
+        if len(members) > 0:
+            for member in members:
+                if check_server_age(member):
+                    if new_acct_role not in member.roles:
+                        await member.add_roles(role)
+    except Exception as e:
+        print(f'{timestamp()}: Failed to check Member roles')
+        print(e)
 
 ### Commands
 @tree.context_menu(name='Post Dev Reply', guild=discord.Object(id=config.server))
@@ -516,9 +524,8 @@ async def on_message(message):
         if message.channel.id in config.auto_publish_channels:
             await message.publish()
     except Exception as e:
-        print('Auto-publish error:')
+        print(f'{timestamp()}: Auto-publish error:')
         print(e)
-        pass
 
     # snap team reply logic
     # checks
