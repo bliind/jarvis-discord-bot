@@ -506,6 +506,12 @@ async def on_raw_reaction_remove(payload):
 
 @bot.event
 async def on_message(message):
+    # auto-delete polls
+    if message.poll:
+        if not check_is_mod(message.author):
+            await message.delete()
+            return
+
     # caps checking
     await check_caps_percent(message)
 
