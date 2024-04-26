@@ -8,6 +8,7 @@ from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
 from time import sleep
+import AutoMod
 
 """
     J.A.R.V.I.S.
@@ -62,6 +63,9 @@ def load_config():
 
 env = os.getenv('JARVIS_ENV')
 load_config()
+
+AutoMod.set_token(config.token)
+AutoMod.set_guild(config.server)
 
 GREEN = 5763719
 RED = 15548997
@@ -479,6 +483,24 @@ async def on_raw_reaction_add(payload):
             remove = random.choice(users)
             await message.remove_reaction(payload.emoji, remove)
 
+@bot.event
+async def on_scheduled_event_create(event):
+    guild = bot.get_guild(config.server)
+    events = await guild.fetch_scheduled_events()
+    white_list = [f"*event={e.url.split('/')[-1]}" for e in events]
+
+    rules = AutoMod.get_automod_rules()
+    for rule in rules:
+        if rule['name'] == config.automod_links_name:
+            the_rule = rule
+            break
+
+    try:
+        the_rule['trigger_metadata']['allow_list'] = white_list
+        AutoMod.update_automod_rule(the_rule['id'], the_rule)
+    except Exception as e:
+        print(f'{timestamp()}: Failed to update event whitelists:')
+        print(e)
 
 @bot.event
 async def on_raw_reaction_remove(payload):
