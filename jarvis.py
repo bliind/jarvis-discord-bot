@@ -8,6 +8,9 @@ from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
 from time import sleep
+from views import QuizView
+import jarvisdb
+import AutoMod
 
 """
     J.A.R.V.I.S.
@@ -62,6 +65,9 @@ def load_config():
 
 env = os.getenv('JARVIS_ENV')
 load_config()
+
+AutoMod.set_token(config.token)
+AutoMod.set_guild(config.server)
 
 GREEN = 5763719
 RED = 15548997
@@ -382,6 +388,49 @@ async def priority_command(interaction: discord.Interaction, ping: discord.User 
         Priority is checked at the beginning of every turn, so if you are at a complete tie two turns in a row, it will randomly assign priority on the second turn independent of who had priority in the first turn.
     '''.replace(' '*8, '').strip()
     await interaction.response.send_message(message)
+
+@tree.command(name='snap_quiz', description='Kick off a SNAP Quiz', guild=discord.Object(id=config.server))
+async def snap_quiz(interaction: discord.Interaction, quiz_name: str, hours: float):
+    await interaction.response.defer()
+
+    # load quiz data
+    try:
+        with open(f'quizzes/{quiz_name}.json') as s:
+            quiz_data = json.load(s)
+    except:
+        await interaction.edit_original_response(content=f'Could not find quiz: {quiz_name}')
+        return
+
+    # set up quiz
+    quizview = QuizView(interaction, quiz_data['options'], timeout=int(hours*3600))
+    embed = discord.Embed(color=discord.Color.blurple(), title=quiz_data['name'], description='')
+    embed.set_author(name='SNAP Quiz', icon_url=bot.user.avatar.url)
+    for idx, option in enumerate(quiz_data['options']):
+        embed.description += f'{idx+1}: **{option}**\n'
+    embed.description += '\n### Make sure of your answer, only your first selection will be accepted!'
+
+    # post the quiz
+    message = await interaction.edit_original_response(embed=embed, view=quizview)
+    # create the quiz in the database
+    await jarvisdb.create_quiz(message.id, quiz_data['name'], quiz_data['answer'])
+
+    await quizview.wait()
+
+    content = ''
+    winners = await jarvisdb.get_quiz_winners(message.id)
+    for winner in winners:
+        content += f' <@{winner["user_id"]}>'
+
+    # create the embed to tell people
+    embed = discord.Embed(
+        color=discord.Color.green(),
+        title='This SNAP Quiz has ended!',
+        description='If this pinged you, run /suchandsuch to claim your prize!'
+    )
+    embed.set_author(name='SNAP Quiz', icon_url=bot.user.avatar.url)
+
+    # send the results as a reply to the quiz message
+    await message.reply(content=content, embed=embed)
 
 @tree.command(name='update_config', description='Update ReactionRole config', guild=discord.Object(id=config.server))
 async def update_config_command(interaction):
