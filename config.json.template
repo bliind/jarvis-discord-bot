@@ -32,5 +32,6 @@
     "reaction_role_active": true,
     "reaction_role_reaction": "notArealEmoteHopefully",
     "reaction_role_role": "",
-    "reaction_role_users": []
+    "reaction_role_users": [],
+    "automod_links_name": ""
 }
