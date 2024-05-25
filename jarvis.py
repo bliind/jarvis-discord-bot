@@ -298,6 +298,19 @@ async def first_command(interaction, message_link: str):
         # yes was picked, post
         await send_devreply_embed(message, thread_open)
 
+@tree.command(name='wiki_bump', description='Bump old posts on the specified forum', guild=discord.Object(id=config.server))
+async def first_command(interaction, forum: discord.ForumChannel):
+    await interaction.response.defer(ephemeral=True)
+    if check_is_mod(interaction.user):
+        i = 0
+        async for old_thread in forum.archived_threads(limit=None):
+            message = await old_thread.send('.')
+            await message.delete()
+            i += 1
+        await interaction.followup.send(f'{i} threads were bumped.')
+    else:
+        await interaction.followup.send('Unauthorized.')
+
 @tree.command(name='askdevs', description='Post the ask-the-team guidelines', guild=discord.Object(id=config.server))
 async def askdevs_command(interaction):
     embed = discord.Embed(
