@@ -161,6 +161,16 @@ async def check_caps_percent(message):
         pass
 
 ### Tasks
+@tasks.loop(seconds=3600)
+async def bump_archived_wiki_posts():
+    try:
+        forum = bot.get_channel(config.wiki_forum_channel)
+        async for old_thread in forum.archived_threads(limit=None):
+            await old_thread.edit(archived=False)
+    except Exception as e:
+        print(f'{timestamp()}: Error bumping archived wiki posts:')
+        print(e)
+
 @tasks.loop(seconds=300)
 async def delete_old_streaming_posts():
     try:
@@ -298,19 +308,6 @@ async def first_command(interaction, message_link: str):
         # yes was picked, post
         await send_devreply_embed(message, thread_open)
 
-@tree.command(name='wiki_bump', description='Bump old posts on the specified forum', guild=discord.Object(id=config.server))
-async def first_command(interaction, forum: discord.ForumChannel):
-    await interaction.response.defer(ephemeral=True)
-    if check_is_mod(interaction.user):
-        i = 0
-        async for old_thread in forum.archived_threads(limit=None):
-            message = await old_thread.send('.')
-            await message.delete()
-            i += 1
-        await interaction.followup.send(f'{i} threads were bumped.')
-    else:
-        await interaction.followup.send('Unauthorized.')
-
 @tree.command(name='askdevs', description='Post the ask-the-team guidelines', guild=discord.Object(id=config.server))
 async def askdevs_command(interaction):
     embed = discord.Embed(
@@ -417,6 +414,7 @@ async def on_ready():
     check_mute_roles.start()
     check_member_roles.start()
     delete_old_streaming_posts.start()
+    bump_archived_wiki_posts.start()
 
 @bot.event
 async def on_member_join(member):
