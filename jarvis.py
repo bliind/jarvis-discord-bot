@@ -161,6 +161,16 @@ async def check_caps_percent(message):
         pass
 
 ### Tasks
+@tasks.loop(seconds=3600)
+async def bump_archived_wiki_posts():
+    try:
+        forum = bot.get_channel(config.wiki_forum_channel)
+        async for old_thread in forum.archived_threads(limit=None):
+            await old_thread.edit(archived=False)
+    except Exception as e:
+        print(f'{timestamp()}: Error bumping archived wiki posts:')
+        print(e)
+
 @tasks.loop(seconds=300)
 async def delete_old_streaming_posts():
     try:
@@ -404,6 +414,7 @@ async def on_ready():
     check_mute_roles.start()
     check_member_roles.start()
     delete_old_streaming_posts.start()
+    bump_archived_wiki_posts.start()
 
 @bot.event
 async def on_member_join(member):
