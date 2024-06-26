@@ -35,5 +35,6 @@
     "reaction_role_users": [],
     "wiki_forum_channel": 0,
     "automod_links_name": "",
-    "no_flag_channels": []
+    "no_flag_channels": [],
+    "wiki_links": {}
 }

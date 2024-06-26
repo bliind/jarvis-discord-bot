@@ -345,60 +345,16 @@ async def askdevs_command(interaction):
     await interaction.channel.send(embed=embed)
     await interaction.response.send_message('Done', ephemeral=True)
 
-@tree.command(name='series', description='Explain the Card Series', guild=discord.Object(id=config.server))
-async def series_command(interaction: discord.Interaction, ping: discord.User = None):
-    message=f'''
-        {ping.mention if ping else ''}
-        The card Series (Pools) are the groupings that cards are in. You can only open cards on the collection track from a given Series once you hit the collection level (CL) necessary to unlock them. You can find your collection level underneath your avatar on the Home Screen in the green bar (mobile) or on the top navigation bar titled "Level" (PC).
-        - Series 1 - CL 22-202
-        - Series 2 - CL 208-450
-        - Series 3 - CL 462+
-        - Series 4/5 - CL 610+ (Spotlight Keys)
-
-        Series 4 and 5 cards can also be obtained from the Token Shop starting at CL 500
-    '''.replace(' '*8, '').strip()
+@tree.command(name='wiki', description='Links to common wiki pages', guild=discord.Object(id=config.server))
+async def wiki_command(interaction: discord.Interaction, page: str, ping: discord.User = None):
+    message=f'{ping.mention if ping else ''} {config.wiki_links[page]}'
     await interaction.response.send_message(message)
 
-@tree.command(name='reset', description='Explain rank reset', guild=discord.Object(id=config.server))
-async def reset_command(interaction: discord.Interaction, ping: discord.User = None):
-    message=f'''
-        {ping.mention if ping else ''}
-        Rank reset works as follows:
-        - Deduct 30 ranks from your final rank in the previous season
-        - Round down to the closest integer divisible by 5
-        - Add 3 bonus ranks
-
-        Rank 10, Iron, is the rank floor and you can not go below it.
-        No matter how high you rank at Infinite, you will always reset to rank 73.
-
-        _Example: If you are rank 77, your rank would be reset to 48 (77-30=47, rounded down to 45, +3 to 48)_
-
-    '''.replace(' '*8, '').strip()
-    await interaction.response.send_message(message)
-
-@tree.command(name='bigbads', description='Explain Big Bads™', guild=discord.Object(id=config.server))
-async def bigbad_command(interaction: discord.Interaction, ping: discord.User = None):
-    message=f'''
-        {ping.mention if ping else ''}
-        The "big bads" are cards that are not subject to Series drops, and are therefore "permanently Series 5" (subject to change by Second Dinner). A card is a big bad only if Second Dinner announces that the card is one, there is no other criteria for it.
-        The current Big Bads are Thanos, Galactus, Kang, and the High Evolutionary.
-    '''.replace(' '*8, '').strip()
-    await interaction.response.send_message(message)
-
-@tree.command(name='priority', description='Explain Priority', guild=discord.Object(id=config.server))
-async def priority_command(interaction: discord.Interaction, ping: discord.User = None):
-    message=f'''
-        {ping.mention if ping else ''}
-        **The player with priority will have a glowing border around their name** 
- 
-        Priority is determined using the following steps:
-        1. Priority goes to the player who is winning the most locations. If there is a tie then,
-        2. Priority goes to the player who has the higher point differential (this calculation is inverted on Bar With No Name). If there is a tie then,
-        3. Priority goes to a player randomly.
-
-        Priority is checked at the beginning of every turn, so if you are at a complete tie two turns in a row, it will randomly assign priority on the second turn independent of who had priority in the first turn.
-    '''.replace(' '*8, '').strip()
-    await interaction.response.send_message(message)
+@wiki_command.autocomplete('page')
+async def autocomplete_wiki_page(interaction: discord.Interaction, current: str):
+    return [
+        app_commands.Choice(name=page, value=page) for page in config.wiki_links.keys() if page.startswith(current)
+    ]
 
 @tree.command(name='update_config', description='Update ReactionRole config', guild=discord.Object(id=config.server))
 async def update_config_command(interaction):
