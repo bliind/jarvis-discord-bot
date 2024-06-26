@@ -347,7 +347,7 @@ async def askdevs_command(interaction):
 
 @tree.command(name='wiki', description='Links to common wiki pages', guild=discord.Object(id=config.server))
 async def wiki_command(interaction: discord.Interaction, page: str, ping: discord.User = None):
-    message=f'{ping.mention if ping else ''} {config.wiki_links[page]}'
+    message=f'{ping.mention if ping else ""} {config.wiki_links[page]}'
     await interaction.response.send_message(message)
 
 @wiki_command.autocomplete('page')
