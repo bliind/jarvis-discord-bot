@@ -33,6 +33,7 @@
     "reaction_role_reaction": "notArealEmoteHopefully",
     "reaction_role_role": "",
     "reaction_role_users": [],
-    "wiki_forum_channel": 0
-    "automod_links_name": ""
+    "wiki_forum_channel": 0,
+    "automod_links_name": "",
+    "no_flag_channels": []
 }
