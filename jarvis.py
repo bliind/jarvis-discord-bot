@@ -8,6 +8,7 @@ from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
 from time import sleep
+import configdb
 import AutoMod
 
 """
@@ -507,6 +508,8 @@ async def on_raw_reaction_remove(payload):
 
 @bot.event
 async def on_message(message):
+
+
     # caps checking
     await check_caps_percent(message)
 
@@ -620,8 +623,53 @@ async def on_message_edit(before, after):
             except:
                 pass
 
+async def check_lfg_post(thread):
+    lfg_channel_id = await configdb.get_config('lfg_channel_id')
+    lfg_channel_id = [int(id) for id in lfg_channel_id]
+
+    if thread.parent.type != discord.ChannelType.forum:
+        return
+    if thread.parent.id not in lfg_channel_id:
+        return
+
+    pattern = r'> Name: .+\n> Tag: .+\n> Language: .+\n.*> \* Minimum Ladder Rank: .+\n> \* Minimum Collection Level: .+\n'
+    thread_open = [m async for m in thread.history(limit=1, oldest_first=True)][0]
+
+    if not re.match(pattern, thread_open.content, re.DOTALL):
+        message = '''
+            ## Post Not Successful <:Ohno:980195981888999525>
+            Hey there! It looks like your post doesn't follow the correct formatting for alliance posts. Please make sure to follow the guidelines provided in the forum channel's guidelines.
+
+            Please recreate your post when your slowmode expires to match the format provided. Thanks for helping keep our community organized!
+
+            For reference, the proper formatting is:
+
+            ```
+            > Name: **Clan Name**
+            > Tag: **[Clan Tag]**
+            > Language: **Language**
+
+            > **Join Requirements**
+            > * Minimum Ladder Rank: **Rank**
+            > * Minimum Collection Level: **CL**
+
+            **About us:**
+            **Additional Info:**
+            **How to Apply:**
+            ```
+        '''.replace(' '*12, '').strip()
+        embed = discord.Embed(
+            color=discord.Color.red(),
+            description=message
+        )
+        await thread.send(embed=embed)
+        await thread.edit(archived=True, locked=True)
+
 @bot.event
 async def on_thread_create(thread):
+    # lfg format checker
+    await check_lfg_post(thread)
+
     if thread.parent.type != discord.ChannelType.forum:
         return
     if thread.parent.id in config.auto_pin_channels:
