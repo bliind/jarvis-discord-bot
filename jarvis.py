@@ -4,6 +4,7 @@ import os
 import re
 import datetime
 import random
+import asyncio
 from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
@@ -632,10 +633,19 @@ async def check_lfg_post(thread):
     if thread.parent.id not in lfg_channel_id:
         return
 
-    pattern = r'> Name: .+\n> Tag: .+\n> Language: .+\n.*> \* Minimum Ladder Rank: .+\n> \* Minimum Collection Level: .+\n'
+    patterns = [
+        r'^> Name: (.+)$',
+        r'^> Tag: (.+)$',
+        r'^> Language: (.+)$',
+        r'^> \* Minimum Ladder Rank: (.+)$',
+        r'^> \* Minimum Collection Level: (.+)$'
+    ]
+
+    # sleep to wait for the message, discord will send this event before the message is there?
+    await asyncio.sleep(1)
     thread_open = [m async for m in thread.history(limit=1, oldest_first=True)][0]
 
-    if not re.match(pattern, thread_open.content, re.DOTALL):
+    if None in [re.search(p, thread_open.content, re.MULTILINE) for p in patterns]:
         message = '''
             ## Post Not Successful <:Ohno:980195981888999525>
             Hey there! It looks like your post doesn't follow the correct formatting for alliance posts. Please make sure to follow the guidelines provided in the forum channel's guidelines.
