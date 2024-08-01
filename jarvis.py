@@ -634,11 +634,11 @@ async def check_lfg_post(thread):
         return
 
     patterns = [
-        r'^> Name: (.+)$',
-        r'^> Tag: (.+)$',
-        r'^> Language: (.+)$',
-        r'^> \* Minimum Ladder Rank: (.+)$',
-        r'^> \* Minimum Collection Level: (.+)$'
+        r'Name: (.+)$',
+        r'Tag: (.+)$',
+        r'Language: (.+)$',
+        r'\* Minimum Ladder Rank: (.+)$',
+        r'\* Minimum Collection Level: (.+)$'
     ]
 
     # sleep to wait for the message, discord will send this event before the message is there?
