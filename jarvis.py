@@ -8,7 +8,6 @@ import asyncio
 from ConfigModal import ConfigModal
 from discord import app_commands
 from discord.ext import tasks
-from time import sleep
 import configdb
 import AutoMod
 
@@ -162,10 +161,14 @@ async def check_caps_percent(message):
         if len(alph) >= 4:
             percent = (sum(map(str.isupper, alph)) / len(alph) * 100)
             if percent >= config.caps_prot_percent:
-                sent = await message.reply(config.caps_prot_message)
+                try: sent = await message.reply(config.caps_prot_message)
+                except Exception as e:
+                    print(e)
+
                 await message.delete()
-                sleep(5)
-                await sent.delete()
+                await asyncio.sleep(5)
+                try: await sent.delete()
+                except: pass
     except AttributeError:
         pass
 
@@ -509,8 +512,6 @@ async def on_raw_reaction_remove(payload):
 
 @bot.event
 async def on_message(message):
-
-
     # caps checking
     await check_caps_percent(message)
 
@@ -520,7 +521,7 @@ async def on_message(message):
         or message.channel.parent.id in config.full_auto_react_channels:
             for emoji in config.full_auto_react_emoji:
                 await message.add_reaction(emoji)
-                sleep(0.5)
+                await asyncio.sleep(0.5)
     except AttributeError:
         pass
 
@@ -596,6 +597,8 @@ async def on_message_delete(message):
 
 @bot.event
 async def on_message_edit(before, after):
+    await check_caps_percent(after)
+
     # checks
     if before.channel.type != discord.ChannelType.public_thread:
         return
@@ -690,7 +693,7 @@ async def on_thread_create(thread):
         async for message in thread.history(limit=1, oldest_first=True):
             for emoji in config.forum_op_auto_react[str(thread.parent.id)]:
                 await message.add_reaction(emoji)
-                sleep(0.5)
+                await asyncio.sleep(0.5)
 
 @bot.event
 async def on_member_update(before, after):
