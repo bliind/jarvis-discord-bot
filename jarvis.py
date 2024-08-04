@@ -163,7 +163,7 @@ async def check_caps_percent(message):
             if percent >= config.caps_prot_percent:
                 try: sent = await message.reply(config.caps_prot_message)
                 except Exception as e:
-                    print(e)
+                    print(e, message)
 
                 await message.delete()
                 await asyncio.sleep(5)
@@ -645,7 +645,7 @@ async def check_lfg_post(thread):
     ]
 
     # sleep to wait for the message, discord will send this event before the message is there?
-    await asyncio.sleep(1)
+    await asyncio.sleep(2)
     thread_open = [m async for m in thread.history(limit=1, oldest_first=True)][0]
 
     if None in [re.search(p, thread_open.content, re.MULTILINE) for p in patterns]:
