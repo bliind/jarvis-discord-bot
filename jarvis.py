@@ -640,8 +640,8 @@ async def check_lfg_post(thread):
         r'Name: (.+)$',
         r'Tag: (.+)$',
         r'Language: (.+)$',
-        r'\* Minimum Ladder Rank: (.+)$',
-        r'\* Minimum Collection Level: (.+)$'
+        r'[\*-] Minimum Ladder Rank: (.+)$',
+        r'[\*-] Minimum Collection Level: (.+)$'
     ]
 
     # sleep to wait for the message, discord will send this event before the message is there?
@@ -671,7 +671,7 @@ async def check_lfg_post(thread):
             **How to Apply:**
             ```
 
-            For ease of use, you can copy (this template)[https://discord.com/channels/978545345715908668/1267912521671770132/1267912521671770132] following the instructions in the post.
+            For ease of use, you can copy [this template](https://discord.com/channels/978545345715908668/1267912521671770132/1267912521671770132) following the instructions in the post.
         '''.replace(' '*12, '').strip()
         embed = discord.Embed(
             color=discord.Color.red(),
