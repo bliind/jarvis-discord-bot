@@ -648,7 +648,7 @@ async def check_lfg_post(thread):
     await asyncio.sleep(2)
     thread_open = [m async for m in thread.history(limit=1, oldest_first=True)][0]
 
-    if None in [re.search(p, thread_open.content, re.MULTILINE) for p in patterns]:
+    if None in [re.search(p, thread_open.content, re.MULTILINE | re.IGNORECASE) for p in patterns]:
         message = '''
             ## Post Not Successful <:Ohno:980195981888999525>
             Hey there! It looks like your post doesn't follow the correct formatting for alliance posts. Please make sure to follow the guidelines provided in the forum channel's guidelines.
@@ -670,6 +670,8 @@ async def check_lfg_post(thread):
             **Additional Info:**
             **How to Apply:**
             ```
+
+            For ease of use, you can copy (this template)[https://discord.com/channels/978545345715908668/1267912521671770132/1267912521671770132] following the instructions in the post.
         '''.replace(' '*12, '').strip()
         embed = discord.Embed(
             color=discord.Color.red(),
