@@ -510,8 +510,16 @@ async def on_raw_reaction_remove(payload):
 
     await output_channel.send(embed=embed)
 
+async def check_owner_call(message):
+    if bot.user.mentioned_in(message):
+        if message.author.id == 145971157902950401:
+            await message.reply('At your service, sir.')
+
 @bot.event
 async def on_message(message):
+    # check for owner call
+    await check_owner_call(message)
+
     # caps checking
     await check_caps_percent(message)
 
