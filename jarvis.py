@@ -358,7 +358,7 @@ async def wiki_command(interaction: discord.Interaction, page: str, ping: discor
 @wiki_command.autocomplete('page')
 async def autocomplete_wiki_page(interaction: discord.Interaction, current: str):
     return [
-        app_commands.Choice(name=page, value=page) for page in config.wiki_links.keys() if page.startswith(current)
+        app_commands.Choice(name=page, value=page) for page in config.wiki_links.keys() if page.lower().startswith(current.lower())
     ]
 
 @tree.command(name='update_config', description='Update ReactionRole config', guild=discord.Object(id=config.server))
