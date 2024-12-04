@@ -1,3 +1,4 @@
+# # -*- coding: utf-8 -*-
 import discord
 import json
 import os
@@ -153,6 +154,12 @@ async def check_caps_percent(message):
                 return
         if message.channel.id in config.caps_prot_exclude_channels:
             return
+
+        try:
+            if message.channel.parent.id in config.caps_prot_exclude_channels:
+                return
+        except:
+            pass
 
         # remove emotes
         content = re.sub(r':[\w\d]+:', '', message.content)
