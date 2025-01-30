@@ -348,7 +348,6 @@ async def askdevs_command(interaction):
             * **4. No "When is X happening". The developers will announce when things will go live, not in a Q&A forum.**
             * **5. Repost Questions will be removed if there is a currently unlocked post with the same question.**
             * **6. No questions containing datamined content or spoilers.** Your question will be deleted on the spot and you will get a warn, even if you spoiler tag it.
-            * **7. No questions about matchmaking in ladder or conquest.**
 
             If your post was Closed, it means it violated one, or more, of our guide lines.
         '''.replace(' '*12, '').strip()
