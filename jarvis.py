@@ -387,7 +387,7 @@ async def on_ready():
     print(f"{config.env.upper()} JARVIS is ready for duty")
     check_mute_roles.start()
     check_member_roles.start()
-    delete_old_streaming_posts.start()
+    # delete_old_streaming_posts.start() # channels merged, not doing this anymore
     bump_archived_wiki_posts.start()
 
 @bot.event
